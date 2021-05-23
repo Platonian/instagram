@@ -1,11 +1,14 @@
 import { useContext, useEffect, useState } from 'react'
-import { Link, useHistory } from 'react-router-dom'
+import { Link, Route, useHistory } from 'react-router-dom'
 import FirebaseContext from '../context/firebase'
 import * as ROUTES from '../constants/routes'
+import {doesUsernameExist} from '../services/firebase'
 
-const Login = () => {
+const Signup = () => {
     const { firebase } = useContext(FirebaseContext)
     const history = useHistory()
+    const [username, setUsername] = useState('')
+    const [fullName, setFullName] = useState('')
     const [emailAddress, setEmailAddress] = useState('')
     const [password, setPassword] = useState('')
     const [error, setError] = useState('')
@@ -13,19 +16,44 @@ const Login = () => {
 
 
     useEffect(() => {
-        document.title = "Login - Instagram"
+        document.title = "Sign Up - Instagram"
     }, [])
 
-    const handleLogin = async (event) => {
+    const handleSignup = async (event) => {
         event.preventDefault()
-        try {
-            await firebase.auth().signInWithEmailAndPassword(emailAddress, password)
-            history.push(ROUTES.DASHBOARD)
-        } catch (error) {
-            setEmailAddress('')
-            setPassword('')
-            setError(error.message)
+
+        const usernameExists = await doesUsernameExist(username)
+        console.log(usernameExists)
+        if(!usernameExists) {
+            try {
+                const createdUserResult = await firebase.auth().createUserWithEmailAndPassword(emailAddress, password)
+                console.log(createdUserResult)
+
+                await createdUserResult.user.updateProfile({
+                    displayName: username
+                })
+                await firebase.firestore().collection('users').add({
+                    userId: createdUserResult.user.uid,
+                    username: username.toLowerCase(),
+                    fullName,
+                    emailAddress: emailAddress.toLowerCase(),
+                    following: [],
+                    dateCreated: Date.now()
+                })
+
+                history.push(ROUTES.DASHBOARD)
+
+            } catch (error) {
+                setUsername('')
+                setFullName('')
+                setEmailAddress('')
+                setPassword('')
+                setError(error.messsage)
+            }
+        } else {
+            setError('That username is already taken, please try another.')
         }
+        
     }
     return (
         <div className="container flex mx-auto max-w-screen-md items-center h-screen">
@@ -39,7 +67,21 @@ const Login = () => {
                     </h1>
                     {error && <p className="mb-4 text-xs text-red-primary">{error}</p>}
 
-                    <form onSubmit={handleLogin} method="POST">
+                    <form onSubmit={handleSignup} method="POST">
+                    <input
+                            value={username}
+                            onChange={({ target }) => setUsername(target.value)}
+                            aria-label="Enter your username"
+                            type="text"
+                            placeholder="Username"
+                            className="text-sm text-gray-base w-full mr-3 py-5 px-4 h-2 border border-gray-primary rounded mb-2" />
+                        <input
+                            value={fullName}
+                            onChange={({ target }) => setFullName(target.value)}
+                            aria-label="Enter your full name"
+                            type="text"
+                            placeholder="Full Name"
+                            className="text-sm text-gray-base w-full mr-3 py-5 px-4 h-2 border border-gray-primary rounded mb-2" />
                         <input
                             value={emailAddress}
                             onChange={({ target }) => setEmailAddress(target.value)}
@@ -58,15 +100,15 @@ const Login = () => {
                             disabled={isInvalid}
                             type="submit"
                             className={`bg-blue-medium text-white w-full rounded h-8 font-bold ${isInvalid && `opacity-50`}`}>
-                            Log In
+                            Sign Up
                 </button>
 
 
                     </form>
                 </div>
                 <div className="flex justify-center flex-col items-center w-full bg-white p-4 rounded border border-gray-primary">
-                    <p className="text-sm">Don't have an account?{` `}
-                    <Link to={ROUTES.SIGNUP} className="font-bold text-blue-medium">Sign up</Link>
+                    <p className="text-sm">Already have an account?{` `}
+                    <Link to={ROUTES.LOGIN} className="font-bold text-blue-medium">Log In</Link>
                     </p>
                 </div>
             </div>
@@ -75,7 +117,7 @@ const Login = () => {
     )
 }
 
-export default Login
+export default Signup
 
 // text-red-primary
 //  text-gray-base
