@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import Timeline from '../components/Timeline'
-import Header from '../components/Header'
+import Header from '../components/Header.js'
 import Sidebar from '../components/Sidebar'
 
 const Dashboard = () => {
@@ -9,8 +9,8 @@ const Dashboard = () => {
     }, [])
     return (
         <div>
-            {/* <Header /> */}
-            <div className="grid">
+            <Header />
+            <div className="grid mt-20">
                 <Timeline />
                 <Sidebar />
             </div>
