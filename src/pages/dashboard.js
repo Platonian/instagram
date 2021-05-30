@@ -10,9 +10,13 @@ const Dashboard = () => {
     return (
         <div>
             <Header />
-            <div className="grid mt-20">
-                <Timeline />
-                <Sidebar />
+            <div className="grid grid-cols-3 gap-4 max-w-screen-lg mx-auto justify-between">
+                <div className="col-span-2">
+                    <Timeline />
+                </div>
+                <div className="col-span-1">
+                    <Sidebar />
+                </div>
             </div>
         </div>
     )

@@ -4,11 +4,9 @@ import FirebaseContext from '../context/firebase'
 import UserContext from '../context/user'
 import * as ROUTES from '../constants/routes'
 
-
 const Header = () => {
     const { firebase } = useContext(FirebaseContext)
     const { user } = useContext(UserContext)
-
 
     return (
         <header className="h-16 bg-white border-b border-gray-primary mb-8">
@@ -55,7 +53,11 @@ const Header = () => {
                                                         alt={`${user.displayName} profile`}
                                                     />
                                                     :
-                                                    null
+                                                    <img
+                                                        className="rounded-full h-8 w-8"
+                                                        src={`/images/avatars/default.png`}
+                                                        alt="My profile"
+                                                    />
                                                 }
                                             </Link>
                                         </div>
@@ -63,6 +65,23 @@ const Header = () => {
                                 ) :
                                 (
                                     <>
+                                        <Link to={ROUTES.LOGIN}>
+                                            <button
+                                                type="button"
+                                                className={`bg-blue-medium text-sm text-white rounded w-20 h-8 font-bold`}
+                                            >
+                                                Log In
+                                        </button>
+                                        </Link>
+                                        <Link to={ROUTES.SIGNUP}>
+                                            <button
+                                                type="button"
+                                                className={`text-blue-medium text-sm  rounded w-20 h-8 font-bold`}
+                                            >
+                                                Sign Up
+                                        </button>
+                                        </Link>
+
 
                                     </>
                                 )

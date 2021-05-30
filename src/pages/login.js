@@ -1,4 +1,4 @@
- import { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { Link, useHistory } from 'react-router-dom'
 import FirebaseContext from '../context/firebase'
 import * as ROUTES from '../constants/routes'
@@ -59,14 +59,14 @@ const Login = () => {
                             type="submit"
                             className={`bg-blue-medium text-white w-full rounded h-8 font-bold ${isInvalid && `opacity-50`}`}>
                             Log In
-                </button>
+                        </button>
 
 
                     </form>
                 </div>
                 <div className="flex justify-center flex-col items-center w-full bg-white p-4 rounded border border-gray-primary">
                     <p className="text-sm">Don't have an account?{` `}
-                    <Link to={ROUTES.SIGNUP} className="font-bold text-blue-medium">Sign up</Link>
+                        <Link to={ROUTES.SIGNUP} className="font-bold text-blue-medium">Sign up</Link>
                     </p>
                 </div>
             </div>
